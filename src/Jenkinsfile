@@ -1,0 +1,29 @@
+pipeline {
+    agent any
+    tools {
+        maven 'MAVEN3.9'
+        jdk 'JDK17'
+    }
+
+    stages {
+        stage('Fetch Code') {
+            steps{
+                echo "========executing Fetch Code ========"
+                git branch: 'main', url: 'https://github.com/rosendomg/testgit.git' 
+            }
+        }
+
+        stage('Build') {
+            steps{
+                echo "========executing Build ========"
+                sh 'mvn install -DskipTests' 
+            }
+            post {
+                success {
+                    echo "Archiving Artifact"
+                    archiveArtifacts artifacts: '**/*.jar'
+                }
+            }
+        }
+    }
+}
